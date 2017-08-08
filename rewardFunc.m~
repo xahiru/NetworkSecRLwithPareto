@@ -1,0 +1,8 @@
+function [ rew ] = rewardFunc(G, Action )
+%Given the state returns the reward
+
+
+
+rew = 5;
+end
+
