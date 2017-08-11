@@ -2,6 +2,7 @@
 % This is the main RL entry
 
 %% Game initialization
+clear all;
 numberOfNodes = 5;
 
 AttackerPoints = 100;
@@ -10,6 +11,14 @@ DeffenderPoints = 50;
 gamePoints = 0;
 
 services_lable = {'http', 'ftp', 'dns','ntp', 'telnet'};
+% service_cost = (1:length(services_lable));
+
+service_cost = [15,10,5,5,15];
+virus_install_cost = 40;
+virus_removal_cost = 50;
+steal_data_cost = 10;
+
+
 
 service_state = ones(size(services_lable));
 
@@ -49,7 +58,7 @@ p = plot(G);
  G.Edges.Links = zeros(height(G.Edges),1);
 %  end
 
-XXSON = getValidActions(G,1);
+XXSON = getValidActions(G,1,50);
 
 
 % gstate = ones(numberOfNodes, size(nodeState(1,:)))
@@ -78,10 +87,10 @@ winBonus = 100;  % Option to give a very large bonus when the system reaches the
 
 
 
-states = {nodeState, points}
+% states = {nodeState, points}
 
-R = rewardFunc(states(:,1),states(:,2));
-Q = repmat(R,[1,3]); % Q is length(x1) x length(x2) x length(actions) - IE a bin for every action-state combination.
+% R = rewardFunc(states(:,1),states(:,2));
+% Q = repmat(R,[1,3]); % Q is length(x1) x length(x2) x length(actions) - IE a bin for every action-state combination.
 
 
 
@@ -109,8 +118,7 @@ end
 
 %% Actoin list
 
-
-
+ XXSON = getValidActions(G,1,400);
 %% Points Calculation
 
 

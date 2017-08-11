@@ -7,7 +7,17 @@ numberOfNodes = 5;
 AttackerPoints = 100;
 DeffenderPoints = 50;
 
+gamePoints = 0;
+
 services_lable = {'http', 'ftp', 'dns','ntp', 'telnet'};
+% service_cost = (1:length(services_lable));
+
+service_cost = [20,10,5,5,20];
+virus_install_cost = [40];
+virus_removal_cost = [5
+steal_data_cost = [10];
+
+
 
 service_state = ones(size(services_lable));
 
@@ -15,7 +25,13 @@ link_state = 0 ; %a cell containing all unique combination of nodes not includin
 
 dataState = 1;
 virusState = 1;
-points = 1;
+
+points = (1:3);
+
+
+points(1,1) = AttackerPoints;
+points(1,2) = DeffenderPoints;
+points(1,3) = gamePoints;
 
 % node = linspace(1,nServices,nServices);
 
@@ -31,19 +47,18 @@ G = graph(A~=0);
 p = plot(G);
 %axis equal
 
-l = ones(height(G.Edges));
-
-G.Edges.Links = l(1,:)';
-
 
 %  for k=1:height(G.Nodes)
  G.Nodes.Services = zeros(height(G.Nodes), length(services_lable));
  G.Nodes.Infected = zeros(height(G.Nodes),1);
  G.Nodes.DataCompromised = zeros(height(G.Nodes),1);
-     
+
  
- G.Nodes.DataCompromised = zeros(height(G.Nodes),1);
+ G.Edges.Links = zeros(height(G.Edges),1);
 %  end
+
+XXSON = getValidActions(G,1);
+
 
 % gstate = ones(numberOfNodes, size(nodeState(1,:)))
 
@@ -99,4 +114,11 @@ for j=1:length(x1)
         index=index+1;
     end
 end
+
+%% Actoin list
+
+
+
+%% Points Calculation
+
 
