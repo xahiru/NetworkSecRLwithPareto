@@ -52,7 +52,7 @@ p = plot(G);
 %  for k=1:height(G.Nodes)
  G.Nodes.Services = zeros(height(G.Nodes), length(services_lable));
  G.Nodes.Infected = zeros(height(G.Nodes),1);
- G.Nodes.DataCompromised = zeros(height(G.Nodes),1);
+ G.Nodes.DataCompromised = ones(height(G.Nodes),1);
 
  
  G.Edges.Links = zeros(height(G.Edges),1);
@@ -118,7 +118,8 @@ end
 
 %% Actoin list
 
- XXSON = getValidActions(G,1,400);
+ XXSONATT = getValidActions(G,1,400);
+ XXSONDEF = getValidActions(G,2,400);
 %% Points Calculation
 
 

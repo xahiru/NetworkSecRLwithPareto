@@ -12,13 +12,111 @@ steal_data_cost = 7;
 
 %store node sevice index
 ATTACKER = 1;
+DEFENDER = 2;
 
-ACTIONS = cell(length(find(~G.Nodes.DataCompromised & G.Nodes.Infected))+ length(find(~G.Nodes.Infected))+length(find(~G.Nodes.Services)),2);
-actionsIndex = 1;
 
 if player == ATTACKER
     
+    ACTIONS = cell(length(find(G.Nodes.Infected & G.Nodes.DataCompromised))+ length(find(G.Nodes.Infected))+length(find(~G.Nodes.Services)),2);
+    actionsIndex = 1;
+
+    
     G_Copy = G;
+    %get indices of available services for all the nodes
+    rows = G.Nodes.Services == 1;
+    
+%   x =  find(~G.Nodes.Services)
+    
+    %get node specfic available services
+    for n = 1:(length(rows(:,1)))
+        
+        s_actionIndex = find(rows(n,:));
+        
+        %for each search services get the reward
+         for p = 1:(length(s_actionIndex))
+     
+%            if (points >= service_cost(s_actionIndex(p)))
+             if (points >= service_cost)
+               
+                G_Copy.Nodes.Services(n,s_actionIndex(p)) = 0;
+                ACTIONS{actionsIndex,1} = G_Copy;
+                 reward = rewardFunc(G,G_Copy);
+                 reward(3) = reward(3) -service_cost;
+                 ACTIONS{actionsIndex,2} = reward;
+             end
+
+           actionsIndex = actionsIndex + 1;
+           
+            G_Copy = G;
+        
+         end
+    
+    end
+    
+    
+    G_Copy = G;
+    %get indices non infected nodes
+%     rows = G.Nodes.Infected == 0;
+   rows = find(~G.Nodes.Infected)
+    
+    %for each search services get the reward
+     for n = 1:(length(rows(:,1)))
+     
+          if (points >= virus_install_cost)
+           
+              G_Copy.Nodes.Infected(rows(n)) = 1;
+              
+           
+           ACTIONS{actionsIndex,1} = G_Copy;
+           
+           reward = rewardFunc(G,G_Copy);
+           reward(3) = reward(3) -virus_install_cost;
+           ACTIONS{actionsIndex,2} = reward;
+          end
+          
+           actionsIndex = actionsIndex + 1;
+           
+           G_Copy = G;
+      
+     end
+    
+    
+      G_Copy = G;
+    %get indices non infected nodes
+    rows =  find(G.Nodes.Infected & G.Nodes.DataCompromised);
+    %for each search services get the reward
+     for n = 1:(length(rows(:,1)))
+     
+          if (points >= steal_data_cost)
+              
+           G_Copy.Nodes.DataCompromised(rows(n)) = 0;
+           
+           ACTIONS{actionsIndex,1} = G_Copy;
+           
+           reward = rewardFunc(G,G_Copy);
+           reward(3) = reward(3) -steal_data_cost;
+           ACTIONS{actionsIndex,2} = reward;
+           
+          end
+           actionsIndex = actionsIndex + 1;
+           
+            G_Copy = G;
+      
+    end
+    
+    
+   
+end
+
+
+if player == DEFENDER
+    
+    ACTIONS = cell(length(find(~G.Nodes.Infected))+length(find(~G.Nodes.Services)),2);
+    actionsIndex = 1;
+    
+    
+    
+     G_Copy = G;
     %get indices of available services for all the nodes
     rows = G.Nodes.Services == 0;
     
@@ -54,20 +152,20 @@ if player == ATTACKER
     G_Copy = G;
     %get indices non infected nodes
 %     rows = G.Nodes.Infected == 0;
-   rows = find(~G.Nodes.Infected)
+   rows = find(G.Nodes.Infected)
     
     %for each search services get the reward
      for n = 1:(length(rows(:,1)))
      
-          if (points >= virus_install_cost)
+          if (points >= virus_removal_cost)
            
-              G_Copy.Nodes.Infected(rows(n)) = 1;
+              G_Copy.Nodes.Infected(rows(n)) = 0;
               
            
            ACTIONS{actionsIndex,1} = G_Copy;
            
            reward = rewardFunc(G,G_Copy);
-           reward(3) = -virus_install_cost;
+           reward(3) = -virus_removal_cost;
            ACTIONS{actionsIndex,2} = reward;
           end
           
@@ -78,34 +176,13 @@ if player == ATTACKER
      end
     
     
-      G_Copy = G;
-    %get indices non infected nodes
-    rows =  find(G.Nodes.Infected & ~G.Nodes.DataCompromised);
-    %for each search services get the reward
-     for n = 1:(length(rows(:,1)))
-     
-          if (points >= steal_data_cost)
-              
-           G_Copy.Nodes.DataCompromised(rows(n)) = 1;
-           
-           ACTIONS{actionsIndex,1} = G_Copy;
-           
-           reward = rewardFunc(G,G_Copy);
-           reward(3) = -steal_data_cost;
-           ACTIONS{actionsIndex,2} = reward;
-           
-          end
-           actionsIndex = actionsIndex + 1;
-           
-            G_Copy = G;
-      
-    end
-    
-    
    
+    
+
+    
+    
+    
 end
-
-
 
 
 
