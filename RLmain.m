@@ -13,12 +13,6 @@ gamePoints = 0;
 services_lable = {'http', 'ftp', 'dns','ntp', 'telnet'};
 % service_cost = (1:length(services_lable));
 
-service_cost = [15,10,5,5,15];
-virus_install_cost = 40;
-virus_removal_cost = 50;
-steal_data_cost = 10;
-
-
 
 service_state = ones(size(services_lable));
 
@@ -120,6 +114,7 @@ end
 
  XXSONATT = getValidActions(G,1,400);
  XXSONDEF = getValidActions(G,2,400);
-%% Points Calculation
+%% Pareto Calculation
+XXXXCOMBINEDREWARD = getParetoFronts(XXSONATT,XXSONDEF, G);
 
-
+XXXXCOMBINEDREWARDTWO = XXXXCOMBINEDREWARD(:,:,1);

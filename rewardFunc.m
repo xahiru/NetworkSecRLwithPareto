@@ -1,96 +1,55 @@
-function [ rew ] = rewardFunc(G_State1, G_State2,player)
-%Given the state returns the reward
+function [ reward ] = rewardFunc(state, node, action, cost ,player)
 
+% rewardFunc(G,n,[2,s_actionIndex(p)], virus_removal_cost,player);
+           
 
-service_weight = [15,10,5,5,15];
-ATTACKER = 1;
-DEFENDER = 2;
+state2 = state;
+ATTACKER =1;
+DEFENDER =2;
+SERVICE =1;
+VIRUS = 2;
+DATA = 3;
 
-
-%get all services 
-     cols1 = G_State1.Nodes.Services;
-    
-%      service_links1 = 0;
-    
-%      total_service1_cost = 0;
-
-    total_downlinks = 0;
-    
-    for n = 1:(length(cols1(1,:)))
-      
-        %get the number of running services 
-%           ns = length(find(cols1(:,n)));
-          ns = length(find(~cols1(:,n))); %downlinks
-          link = (ns * (ns-1))/2 ;
-          
-          if(link)
-%              linkweight = link * service_weight(n);
-% %            total_service1_cost = total_service1_cost + service_weight(n)
-%             service_links1 = service_links1 + linkweight  ;
-            total_downlinks = total_downlinks + link; %total downlinks
-            
-          end
-          
-        
-      
-    end
-    
-    
-       
-        %to maintain a service requires [1] points
-        %to calculate service attack maintanance 
-        %subtract  the number of total runninglinks from
-        %totallinkcombintions and multiply by [1]
-        total_downlinks 
-        
-%     compromised1 = length(find(G_State1.Nodes.DataCompromised));
-    
-    virust_infected = length(find(G_State1.Nodes.Infected));
-    
-    maintanance_cost = total_downlinks + virust_infected; 
-    
-    cols2 = G_State2.Nodes.Services;
-    
-     service_links2 = 0;
-    
-    for n = 1:(length(cols2(1,:)))
-         %get the number of running services 
-          ns = length(find(cols2(:,n)));
-          link = (ns * (ns-1))/2 ;
-          
-          if(link)
-%              link = link * service_weight(n);
-             linkweight = link * service_weight(n);
-%            total_service1_cost = total_service1_cost + service_cost(n)
-            service_links2 = service_links2 + linkweight  ;
-          end
-          
-          
-         %if you want to add weights to links
-        %get weight for n (column reflects service) from weight vector
-        % service_links * weight
-        
+if(action(1) ==  SERVICE) 
+    if player == ATTACKER
+        state2.Nodes.Services(node,action(2)) = 0;
     end
     
     if player == DEFENDER
-        compromised2 = length(find(G_State2.Nodes.DataCompromised));
+        state2.Nodes.Services(node,action(2)) = 1;
     end
-    
+end
+
+if(action(1) ==  VIRUS) 
     if player == ATTACKER
-        compromised2 = length(find(~G_State2.Nodes.DataCompromised));
+        state2.Nodes.Infected(node,action(2)) = 1;
     end
     
-    %point difference is the difference of points for the actions taken
-    %since it is associated with the action, it can be assigned from the
-    %calling action function
-%      pointDifferece = 0;
+    if player == DEFENDER
+        state2.Nodes.Infected(node,action(2)) = 0;
+    end
+end
+
+if(action(1) ==  DATA) 
+    if player == ATTACKER
+        state2.Nodes.DataCompromised(node,action(2)) = 0;
+    end
+end
+
+score1 = getStateScore(state);
+
+score2 = getStateScore(state2);
+
+reward = score2-score1;
 
 
-% rew = [service_links1-service_links2,infected2 - infected1,pointDifferece];
+ if player == ATTACKER
+        reward(3) = score2(3) + cost;
+ end
 
-rew = [service_links2,compromised2,-maintanance_cost]; %maintanance_cost will be replaced or with action cost 
-
-
+if player == DEFENDER
+        reward(3) = cost;
+end
 
 end
 
