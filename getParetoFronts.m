@@ -1,6 +1,11 @@
-function [ COMBINED_REWARD ] = getParetoFronts( ATTACK_ACTIONS,DEFENCE_ACTIONS, G )
+function [ ACTIONS ] = getParetoFronts( ATTACK_ACTIONS,DEFENCE_ACTIONS, G, player )
 %GETPARETOFRONTS Summary of this function goes here
 %   Detailed explanation goes here
+
+ATTACKER = 1;
+DEFENDER = 2;
+
+ACTIONS = DEFENCE_ACTIONS;
 
 
 COMBINED_REWARD = cell(length(DEFENCE_ACTIONS),length(ATTACK_ACTIONS),1);
@@ -35,30 +40,79 @@ for n = 1: length(DEFENCE_ACTIONS)
                current_reward = COMBINED_REWARD{n,m,1};
                alt_reward = COMBINED_REWARD{n,o,1};
 
-               if (m ~= o && current_reward < alt_reward)
+              if(player == DEFENDER)
+                if(length(find(current_reward >= alt_reward)) == length(current_reward) && length(find(current_reward > alt_reward)))
                    COMBINED_REWARD{n, m , 2} = 0;
                    break;
-               end
+                end
+              end
+              
+              if(player == ATTACKER)
+                if(length(find(current_reward <= alt_reward)) == length(current_reward) && length(find(current_reward < alt_reward)))
+                   COMBINED_REWARD{n, m , 2} = 0;
+                   break;
+                end
+              end
         end
      end
- end
+end
+ 
 
-for d1 = 1: length(DEFENCE_ACTIONS)
-    
+for d1 =1:  length(DEFENCE_ACTIONS)
+
     for d2 = 1: length(DEFENCE_ACTIONS)
 
-        for a2 = 1: length(ATTACK_ACTIONS)
-            
-            if ( COMBINED_REWARD{d2, a2 , 2} == 1 )
-               
-                for a1 = 1: length(ATTACK_ACTIONS)
-                    
-                    
+        if (d1 ~= d2 ) 
+
+            for a2 = 1: length(ATTACK_ACTIONS)
+                
+                dominated = 0;
+
+                if ( COMBINED_REWARD{d2, a2 , 2} == 1 )
+                    dominated = 1;
+
+                    for a1 = 1: length(ATTACK_ACTIONS)
+
+                         if(COMBINED_REWARD{d1, a1 , 2} == 1)
+          
+                             current_reward = COMBINED_REWARD{d2,a2,1};
+                             alt_reward = COMBINED_REWARD{d1,a1,1};
+                             
+                             if(player == DEFENDER)
+                                 if(~(length(find(current_reward >= alt_reward)) == length(current_reward) && length(find(current_reward > alt_reward))))
+                                    dominated = 0;
+
+                                 end
+                             end
+                             
+                             if(player == ATTACKER)
+                                 if(~(length(find(current_reward <= alt_reward)) == length(current_reward) && length(find(current_reward < alt_reward))))
+                                    dominated = 0;
+
+                                 end
+                             end
+                             
+                             
+                         end
+                       
+                    end
+                end
+
+                if( dominated )
+                    % remove current defense  
+                    ACTIONS{d1,1} = 0;
+                    break;
                 end
             end
-        end
+
+            if (dominated )
+                break;
+            end 
+        end 
      end
- end
+end
+
+ACTIONS(cellfun(@(x)x==0, ACTIONS(:,1)),:) = [];
 
 
 
