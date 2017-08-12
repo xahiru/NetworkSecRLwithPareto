@@ -1,4 +1,4 @@
-function [ rew ] = rewardFunc(G_State1, G_State2)
+function [ rew ] = rewardFunc(G_State1, G_State2,player)
 %Given the state returns the reward
 
 
@@ -59,7 +59,7 @@ DEFENDER = 2;
           link = (ns * (ns-1))/2 ;
           
           if(link)
-             link = link * service_weight(n);
+%              link = link * service_weight(n);
              linkweight = link * service_weight(n);
 %            total_service1_cost = total_service1_cost + service_cost(n)
             service_links2 = service_links2 + linkweight  ;
@@ -72,8 +72,13 @@ DEFENDER = 2;
         
     end
     
-    compromised2 = length(find(~G_State2.Nodes.DataCompromised));
+    if player == DEFENDER
+        compromised2 = length(find(G_State2.Nodes.DataCompromised));
+    end
     
+    if player == ATTACKER
+        compromised2 = length(find(~G_State2.Nodes.DataCompromised));
+    end
     
     %point difference is the difference of points for the actions taken
     %since it is associated with the action, it can be assigned from the
@@ -83,8 +88,7 @@ DEFENDER = 2;
 
 % rew = [service_links1-service_links2,infected2 - infected1,pointDifferece];
 
-
-rew = [service_links2,compromised2,-maintanance_cost];
+rew = [service_links2,compromised2,-maintanance_cost]; %maintanance_cost will be replaced or with action cost 
 
 
 

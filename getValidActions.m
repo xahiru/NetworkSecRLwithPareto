@@ -17,7 +17,7 @@ DEFENDER = 2;
 
 if player == ATTACKER
     
-    ACTIONS = cell(length(find(G.Nodes.Infected & G.Nodes.DataCompromised))+ length(find(G.Nodes.Infected))+length(find(~G.Nodes.Services)),2);
+    ACTIONS = cell(length(find(G.Nodes.Infected & G.Nodes.DataCompromised))+ length(find(G.Nodes.Infected))+length(find(~G.Nodes.Services))+1,2);
     actionsIndex = 1;
 
     
@@ -39,10 +39,17 @@ if player == ATTACKER
              if (points >= service_cost)
                
                 G_Copy.Nodes.Services(n,s_actionIndex(p)) = 0;
-                ACTIONS{actionsIndex,1} = G_Copy;
-                 reward = rewardFunc(G,G_Copy);
+                
+                 reward = rewardFunc(G,G_Copy,player);
                  reward(3) = reward(3) -service_cost;
-                 ACTIONS{actionsIndex,2} = reward;
+                
+%                  rewCost = (reward(3)*-1)
+                 
+                 if (points >= (reward(3)*-1))
+                    ACTIONS{actionsIndex,1} = G_Copy;
+                    reward(3) = reward(3) + points;
+                    ACTIONS{actionsIndex,2} = reward;
+                 end
              end
 
            actionsIndex = actionsIndex + 1;
@@ -66,12 +73,18 @@ if player == ATTACKER
            
               G_Copy.Nodes.Infected(rows(n)) = 1;
               
+           reward = rewardFunc(G,G_Copy,player);
            
-           ACTIONS{actionsIndex,1} = G_Copy;
-           
-           reward = rewardFunc(G,G_Copy);
            reward(3) = reward(3) -virus_install_cost;
-           ACTIONS{actionsIndex,2} = reward;
+%            rewCost = (reward(3)*-1)
+           
+            if (points >= (reward(3)*-1))
+                    ACTIONS{actionsIndex,1} = G_Copy;
+                    reward(3) = reward(3) + points;
+                    ACTIONS{actionsIndex,2} = reward;
+             end
+           
+          
           end
           
            actionsIndex = actionsIndex + 1;
@@ -91,11 +104,16 @@ if player == ATTACKER
               
            G_Copy.Nodes.DataCompromised(rows(n)) = 0;
            
-           ACTIONS{actionsIndex,1} = G_Copy;
-           
-           reward = rewardFunc(G,G_Copy);
+           reward = rewardFunc(G,G_Copy,player);
            reward(3) = reward(3) -steal_data_cost;
-           ACTIONS{actionsIndex,2} = reward;
+           
+%            rewCost = (reward(3)*-1)
+           
+            if (points >= (reward(3)*-1))
+                    ACTIONS{actionsIndex,1} = G_Copy;
+                    reward(3) = reward(3) + points;
+                    ACTIONS{actionsIndex,2} = reward;
+             end
            
           end
            actionsIndex = actionsIndex + 1;
@@ -111,7 +129,7 @@ end
 
 if player == DEFENDER
     
-    ACTIONS = cell(length(find(~G.Nodes.Infected))+length(find(~G.Nodes.Services)),2);
+    ACTIONS = cell(length(find(~G.Nodes.Infected))+length(find(~G.Nodes.Services))+1,2);
     actionsIndex = 1;
     
     
@@ -135,8 +153,9 @@ if player == DEFENDER
                
                 G_Copy.Nodes.Services(n,s_actionIndex(p)) = 1;
                 ACTIONS{actionsIndex,1} = G_Copy;
-                 reward = rewardFunc(G,G_Copy);
+                 reward = rewardFunc(G,G_Copy,player);
                  reward(3) = -service_cost;
+                 reward(3) = reward(3) + points;
                  ACTIONS{actionsIndex,2} = reward;
              end
 
@@ -164,8 +183,9 @@ if player == DEFENDER
            
            ACTIONS{actionsIndex,1} = G_Copy;
            
-           reward = rewardFunc(G,G_Copy);
+          reward = rewardFunc(G,G_Copy,player);
            reward(3) = -virus_removal_cost;
+           reward(3) = reward(3) + points;
            ACTIONS{actionsIndex,2} = reward;
           end
           
@@ -175,12 +195,9 @@ if player == DEFENDER
       
      end
     
-    
-   
-    
-
-    
-    
+ %Do nothing
+ 
+ 
     
 end
 

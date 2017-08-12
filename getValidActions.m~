@@ -17,7 +17,7 @@ DEFENDER = 2;
 
 if player == ATTACKER
     
-    ACTIONS = cell(length(find(~G.Nodes.DataCompromised & G.Nodes.Infected))+ length(find(~G.Nodes.Infected))+length(find(~G.Nodes.Services)),2);
+    ACTIONS = cell(length(find(G.Nodes.Infected & G.Nodes.DataCompromised))+ length(find(G.Nodes.Infected))+length(find(~G.Nodes.Services)),2);
     actionsIndex = 1;
 
     
@@ -39,9 +39,11 @@ if player == ATTACKER
              if (points >= service_cost)
                
                 G_Copy.Nodes.Services(n,s_actionIndex(p)) = 0;
-                ACTIONS{actionsIndex,1} = G_Copy;
+                
                  reward = rewardFunc(G,G_Copy);
                  reward(3) = reward(3) -service_cost;
+                 if (points >= service_cost)
+                 ACTIONS{actionsIndex,1} = G_Copy;
                  ACTIONS{actionsIndex,2} = reward;
              end
 
@@ -133,7 +135,7 @@ if player == DEFENDER
 %            if (points >= service_cost(s_actionIndex(p)))
              if (points >= service_cost)
                
-                G_Copy.Nodes.Services(n,s_actionIndex(p)) = 0;
+                G_Copy.Nodes.Services(n,s_actionIndex(p)) = 1;
                 ACTIONS{actionsIndex,1} = G_Copy;
                  reward = rewardFunc(G,G_Copy);
                  reward(3) = -service_cost;
