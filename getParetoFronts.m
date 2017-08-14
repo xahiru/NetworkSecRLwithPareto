@@ -9,8 +9,9 @@ ACTIONS = DEFENCE_ACTIONS;
 
 
 COMBINED_REWARD = cell(length(DEFENCE_ACTIONS),length(ATTACK_ACTIONS),1);
-state_reward = getStateScore(G)
+state_reward = getStateScore(G);
 state_reward(3) = 0;
+
 
 for n = 1: length(DEFENCE_ACTIONS)
     
@@ -18,6 +19,12 @@ for n = 1: length(DEFENCE_ACTIONS)
         
          temp_attack = ATTACK_ACTIONS{m,3};
          temp_def = DEFENCE_ACTIONS{n,3};
+
+        if (player == ATTACKER) 
+             temp_attack = DEFENCE_ACTIONS{n,3};
+             temp_def = ATTACK_ACTIONS{m,3};
+        end
+
          if (~isempty(temp_attack) && ~isempty(temp_def));
          temp_reward = state_reward + temp_def + temp_attack;
          temp_reward(3) = temp_attack(3) - temp_def(3);
@@ -105,9 +112,9 @@ for d1 =1:  length(DEFENCE_ACTIONS)
                 end
             end
 
-            if (dominated )
-                break;
-            end 
+%             if (dominated )
+%                 break;
+%             end 
         end 
      end
 end

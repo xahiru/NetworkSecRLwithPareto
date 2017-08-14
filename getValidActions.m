@@ -56,7 +56,7 @@ if player == ATTACKER
    
     %get indices non infected nodes
 %     rows = G.Nodes.Infected == 0;
-   rows = find(~G.Nodes.Infected)
+   rows = find(~G.Nodes.Infected);
     
     %for each search services get the reward
      for n = 1:(length(rows(:,1)))
@@ -158,7 +158,7 @@ if player == DEFENDER
   
     %get indices non infected nodes
 %     rows = G.Nodes.Infected == 0;
-   rows = find(G.Nodes.Infected)
+   rows = find(G.Nodes.Infected);
     
     %for each search services get the reward
      for n = 1:(length(rows(:,1)))
