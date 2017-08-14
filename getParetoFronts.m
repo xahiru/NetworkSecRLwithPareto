@@ -13,9 +13,9 @@ state_reward = getStateScore(G);
 state_reward(3) = 0;
 
 
-for n = 1: length(DEFENCE_ACTIONS)
+for n = 1: size(DEFENCE_ACTIONS,1)
     
-    for m = 1: length(ATTACK_ACTIONS)
+    for m = 1: size(ATTACK_ACTIONS,1)
         
          temp_attack = ATTACK_ACTIONS{m,3};
          temp_def = DEFENCE_ACTIONS{n,3};
@@ -38,11 +38,11 @@ for n = 1: length(DEFENCE_ACTIONS)
     end
 end
 
-for n = 1: length(DEFENCE_ACTIONS)
+for n = 1: size(DEFENCE_ACTIONS,1)
     
-    for m = 1: length(ATTACK_ACTIONS)
+    for m = 1: size(ATTACK_ACTIONS,1)
 
-        for o = 1: length(ATTACK_ACTIONS)
+        for o = 1: size(ATTACK_ACTIONS,1)
 
                current_reward = COMBINED_REWARD{n,m,1};
                alt_reward = COMBINED_REWARD{n,o,1};
@@ -65,20 +65,20 @@ for n = 1: length(DEFENCE_ACTIONS)
 end
  
 
-for d1 =1:  length(DEFENCE_ACTIONS)
+for d1 =1:  size(DEFENCE_ACTIONS,1)
 
-    for d2 = 1: length(DEFENCE_ACTIONS)
+    for d2 = 1: size(DEFENCE_ACTIONS,1)
 
         if (d1 ~= d2 ) 
 
-            for a2 = 1: length(ATTACK_ACTIONS)
+            for a2 = 1: size(ATTACK_ACTIONS,1)
                 
                 dominated = 0;
 
                 if ( COMBINED_REWARD{d2, a2 , 2} == 1 )
                     dominated = 1;
 
-                    for a1 = 1: length(ATTACK_ACTIONS)
+                    for a1 = 1: size(ATTACK_ACTIONS,1)
 
                          if(COMBINED_REWARD{d1, a1 , 2} == 1)
           

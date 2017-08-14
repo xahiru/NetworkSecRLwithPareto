@@ -6,8 +6,7 @@ G_COPY  = G;
 
 flipbit = 1;
 
-ACTION{1}
-X = ACTION{2}(1)
+X = ACTION{2}(1);
 
 if player == 1 %ATTACKER
     flipbit = ~flipbit;

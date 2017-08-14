@@ -34,7 +34,7 @@ services_lable = {'http', 'ftp', 'dns'};
 dataState = 1;
 virusState = 1;
 
-points = (1:3);
+points = (1:2);
 points(1,1) = AttackerPoints;
 points(1,2) = DeffenderPoints;
 % points(1,3) = gamePoints;
@@ -148,16 +148,16 @@ QTABLE = cell(gameRounds * points(ATTACKER),4);
     D_VALID_ACTIONS = getValidActions(G,DEFENDER,points(DEFENDER));
     
     % Get Pareto Fronts
-    A_PARETO_ACTIONS = getParetoFronts(A_VALID_ACTIONS, D_VALID_ACTIONS, G, ATTACKER);
+    A_PARETO_ACTIONS = getParetoFronts(D_VALID_ACTIONS, A_VALID_ACTIONS, G, ATTACKER);
     D_PARETO_ACTIONS = getParetoFronts(A_VALID_ACTIONS, D_VALID_ACTIONS, G, DEFENDER);
     
     % Choose Actions
     A_ACTION = getQTableAction(G, A_PARETO_ACTIONS, ATTACKER, QTABLE);    
     D_ACTION = getQTableAction(G, D_PARETO_ACTIONS, DEFENDER, QTABLE);  
     
+    G2 = updateState(G, A_PARETO_ACTIONS(A_ACTION(1),:), ATTACKER);
+    G2 = updateState(G2, D_PARETO_ACTIONS(D_ACTION(1),:), DEFENDER);
     G = G2;
-%    G2 = updateState(G, A_PARETO_ACTIONS(A_ACTION(1),:), ATTACKER);
-    G2 = updateState(G, D_PARETO_ACTIONS(D_ACTION(1),:), DEFENDER);
-    
+    G.Nodes
 
  end

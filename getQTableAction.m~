@@ -12,7 +12,7 @@ function [ action_and_qvalue_indices ] = getQTableAction(G, ACTIONS, player, QTA
 
 epsilon = 0.3;
 random_qvalue_reward_index = randi([1 3], 1);
-action_qvalue_index = nan(length(ACTIONS),2);
+action_qvalue_index = nan(length(ACTIONS),2)
 action_and_qvalue_indices = [0,0];
 
 % length(ACTIONS)
@@ -48,7 +48,7 @@ if (rand() > epsilon)
 
 else
     
-    chosen_action_index = randi(size(ACTIONS,1));
+    chosen_action_index = %randi(size(QTABLE,1));
     chosen_qvalue_index = 0;
     
     for o = 1: size(QTABLE,1)
