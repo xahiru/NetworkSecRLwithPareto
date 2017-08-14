@@ -1,13 +1,13 @@
-function [ ACTIONS ] = getValidActions( G, player, points )
+function [ ACTIONS ] = getValidActions( G, player, points, cost_vector )
 %For a given Graph state valid action and rewards pairs are returned
 %   Detailed explanation goes here
 
 
 % service_cost = [15,10,5,5,15];
-service_cost = 2;
-virus_install_cost = 4;
-virus_removal_cost = 11; %cost of removal should be the opposite of stealing data + installing virus
-steal_data_cost = 7;
+service_cost = cost_vector(1);
+virus_install_cost = cost_vector(2);
+virus_removal_cost = cost_vector(3); %cost of removal should be the opposite of stealing data + installing virus
+steal_data_cost = cost_vector(4);
 
 
 %store node sevice index
@@ -16,7 +16,7 @@ DEFENDER = 2;
 
 if player == ATTACKER
     
-    ACTIONS = cell(length(find(G.Nodes.Infected & G.Nodes.DataCompromised))+ length(find(G.Nodes.Infected))+length(find(~G.Nodes.Services)),3);
+    ACTIONS = cell(length(find(G.Nodes.Infected & G.Nodes.DataCompromised))+ length(find(G.Nodes.Infected))+length(find(~G.Nodes.Services))+1,3);
     actionsIndex = 1;
 
     
@@ -109,7 +109,7 @@ if player == ATTACKER
     ToRemove = find(cellfun(@isempty,ACTIONS));
     ACTIONS(ToRemove) = [];
     sizeI = size(ACTIONS);
-    ACTIONS = reshape(ACTIONS, [sizeI(2) / 3, 3]);
+    ACTIONS = reshape(ACTIONS, [(sizeI(1) * sizeI(2)) / 3, 3]);
    
 end
 
@@ -183,7 +183,7 @@ if player == DEFENDER
     ToRemove = find(cellfun(@isempty,ACTIONS));
     ACTIONS(ToRemove) = [];
     sizeI = size(ACTIONS);
-    ACTIONS = reshape(ACTIONS, [sizeI(2) / 3, 3]);
+    ACTIONS = reshape(ACTIONS, [(sizeI(1) * sizeI(2)) / 3, 3]);
     
     
 end

@@ -12,10 +12,14 @@ DeffenderPoints = 50;
 DEFENDER =2;
 ATTACKER =1;
 
+
+
 service_cost = 2;
 virus_install_cost = 4;
 virus_removal_cost = 11; %cost of removal should be the opposite of stealing data + installing virus
 steal_data_cost = 7;
+
+cost_vector = [service_cost,virus_install_cost,virus_removal_cost,steal_data_cost];  
 
 % qmax = max(AttackerPoints,DeffenderPoints);
 % qmin = min([virus_install_cost,service_cost, virus_removal_cost,steal_data_cost]);
@@ -69,7 +73,7 @@ p = plot(G);
 % gstate = ones(numberOfNodes, size(nodeState(1,:)))
 
 
-% learnRate = 0.99;
+learnRate = 0.99;
 
 
 %%% Exploration vs. exploitation
@@ -78,7 +82,7 @@ p = plot(G);
 % epsilonDecay = 0.98; % Decay factor per iteration.
 
 %%% Future vs present value
-% discount = 0.9; % When assessing the value of a state & action, how important is the value of the future states?
+discount = 0.9; % When assessing the value of a state & action, how important is the value of the future states?
 
 %%% Inject some noise?
 % successRate = 1; % How often do we do what we intend to do?
@@ -124,8 +128,8 @@ clear A
 
 %% Actoin list
 
- XXSONATT = getValidActions(G,1,400);
- XXSONDEF = getValidActions(G,2,400);
+%  XXSONATT = getValidActions(G,1,400);
+%  XXSONDEF = getValidActions(G,2,400);
 %% Pareto Calculation
 XXXXCOMBINEDREWARD = getCombinedRewards(XXSONATT,XXSONDEF, G);
 XXXXCPartoDEFENDER = getParetoFronts(XXSONATT,XXSONDEF, G,2);
@@ -141,23 +145,62 @@ XXXXCPartoATTACKER = getParetoFronts(XXSONDEF,XXSONATT, G,1);
 % Create a Q-table
 QTABLE = cell(gameRounds * points(ATTACKER),4); 
 
+qTableSize = size(QTABLE,1);
+ tic
+ 
  for n = 1 : gameRounds
+    
+    % reset points
+    points(ATTACKER) = AttackerPoints;
+    points(DEFENDER) = DeffenderPoints;
+    cumulative_game_reward = [0, 0, 0];
+    G1 = G;
 
     % Get valid action
-    A_VALID_ACTIONS = getValidActions(G,ATTACKER,points(ATTACKER));
-    D_VALID_ACTIONS = getValidActions(G,DEFENDER,points(DEFENDER));
-    
-    % Get Pareto Fronts
-    A_PARETO_ACTIONS = getParetoFronts(D_VALID_ACTIONS, A_VALID_ACTIONS, G, ATTACKER);
-    D_PARETO_ACTIONS = getParetoFronts(A_VALID_ACTIONS, D_VALID_ACTIONS, G, DEFENDER);
-    
-    % Choose Actions
-    A_ACTION = getQTableAction(G, A_PARETO_ACTIONS, ATTACKER, QTABLE);    
-    D_ACTION = getQTableAction(G, D_PARETO_ACTIONS, DEFENDER, QTABLE);  
-    
-    G2 = updateState(G, A_PARETO_ACTIONS(A_ACTION(1),:), ATTACKER);
-    G2 = updateState(G2, D_PARETO_ACTIONS(D_ACTION(1),:), DEFENDER);
-    G = G2;
-    G.Nodes
+    A_VALID_ACTIONS = getValidActions(G1,ATTACKER,points(ATTACKER),cost_vector);
+    D_VALID_ACTIONS = getValidActions(G1,DEFENDER,points(DEFENDER), cost_vector);
 
+    while (~isempty(A_VALID_ACTIONS) && ~isempty(D_VALID_ACTIONS) )
+        
+        % Get Pareto Fronts
+        A_PARETO_ACTIONS = A_VALID_ACTIONS;
+        % D_PARETO_ACTIONS = D_VALID_ACTIONS;
+        % A_PARETO_ACTIONS = getParetoFronts(D_VALID_ACTIONS, A_VALID_ACTIONS, G1, ATTACKER);
+        D_PARETO_ACTIONS = getParetoFronts(A_VALID_ACTIONS, D_VALID_ACTIONS, G1, DEFENDER);
+
+        % Choose Actions
+        A_ACTION = [randi(size(A_PARETO_ACTIONS,1)), 0]; 
+        % A_ACTION = getQTableAction(G1, A_PARETO_ACTIONS, ATTACKER, QTABLE);    
+        D_ACTION = getQTableAction(G1, D_PARETO_ACTIONS, DEFENDER, QTABLE, qTableSize,0.3); %epsilon  
+
+        % Update the Game state
+        G2 = updateState(G1, A_PARETO_ACTIONS(A_ACTION(1),:), ATTACKER);
+        G2 = updateState(G2, D_PARETO_ACTIONS(D_ACTION(1),:), DEFENDER);
+        
+        % update points
+        points(ATTACKER) = points(ATTACKER) - getActionCost(A_PARETO_ACTIONS(A_ACTION(1),:), ATTACKER, cost_vector );
+        points(DEFENDER) = points(DEFENDER) - getActionCost(D_PARETO_ACTIONS(D_ACTION(1),:), DEFENDER, cost_vector );;
+        
+        % add the state transition reward to the cumulative game reward
+        transition_reward = getTransitionReward(G2, A_PARETO_ACTIONS(A_ACTION(1),:), D_PARETO_ACTIONS(D_ACTION(1),:), cost_vector );
+        
+       
+        cumulative_game_reward = cumulative_game_reward + transition_reward;
+
+        % Get valid action
+        A_VALID_ACTIONS = getValidActions(G2, ATTACKER,points(ATTACKER),cost_vector);
+        D_VALID_ACTIONS = getValidActions(G2, DEFENDER,points(DEFENDER), cost_vector);
+        
+       QTABLE =  updateQValue(G1,G2,D_ACTION(2),D_PARETO_ACTIONS(D_ACTION(1),:),transition_reward, QTABLE, qTableSize, learnRate, discount, D_VALID_ACTIONS,DEFENDER); 
+        G1 = G2;
+        
+
+
+    end
+    
+    cumulative_game_reward
+    % REWARD_VECTOR(n) = cumulative_game_reward; 
+    
+    
  end
+toc

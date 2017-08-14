@@ -3,7 +3,7 @@ function [ score ] = getStateScore( state )
 %   Detailed explanation goes here
 
 service_weight = [15,10,5,5,15];
-data_weight = [0, 0];
+data_weight = [5, 10];
 cols = state.Nodes.Services;
 maintanance_cost =0;
 service_links2 = 0;
