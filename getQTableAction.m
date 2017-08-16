@@ -31,7 +31,7 @@ if (rand() >= epsilon)
 
             % save the Q-value of the find state-action pair 
             if (isequal(QTABLE{m,1},G)  & isequal(QTABLE{m,2},[ACTIONS{n},ACTIONS{n,2}]) & QTABLE{m,3}  == player)
-               action_qvalue_index(n,1) = m
+               action_qvalue_index(n,1) = m;
                action_qvalue_index(n,2) = QTABLE{m,4}(random_qvalue_reward_index);
                break;
             end
@@ -41,7 +41,7 @@ if (rand() >= epsilon)
     end
 
     if(~isempty(find(~isnan(action_qvalue_index(:,1))))) 
-        chosen_action_index = datasample(find(action_qvalue_index(:,2) == max(action_qvalue_index(:,2))),1)
+        chosen_action_index = datasample(find(action_qvalue_index(:,2) == max(action_qvalue_index(:,2))),1);
         action_and_qvalue_indices = [chosen_action_index , action_qvalue_index(chosen_action_index,1)];
     else 
         action_and_qvalue_indices = [randi(size(ACTIONS,1)), 0]; 

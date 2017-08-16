@@ -17,6 +17,7 @@ function [ QTABLE] = updateQValue(G1,G2,QValueIndex,ACTION, transition_reward, Q
             QTABLE{QValueIndex,4} = [0, 0, 0];
             
         end
+       
         
         QTABLE{QValueIndex,4} = QTABLE{QValueIndex,4} + learnRate * (transition_reward + discount * maxQA - QTABLE{QValueIndex,4});
         

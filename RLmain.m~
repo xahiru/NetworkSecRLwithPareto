@@ -149,16 +149,11 @@ end
 toc
 %% Plots
 
-% figure1 = plot(graphData(:,:,1,1));
-
-plot(graphData(:,:,1,1));
+figure1 = plot(graphData(:,:,1,:);
 
 % fitobject = fit(graphData(:,1),find(graphData(:,1)) ,'poly2');
 
 % plot(f,graphData(:,1),find(graphData(:,1)));
-
-% Y = Graphdata2(:,1,3)
-% % X = [1:25;]
 
 
 

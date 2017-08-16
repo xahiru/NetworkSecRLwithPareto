@@ -48,7 +48,9 @@ reward = score2-score1;
  end
 
 if player == DEFENDER
-        reward(3) = cost;
+         reward(3) = cost;
+% cost
+
 end
 
 end

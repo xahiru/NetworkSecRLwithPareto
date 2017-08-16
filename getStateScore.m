@@ -2,9 +2,11 @@ function [ score ] = getStateScore( state )
 %GETSTATESCORE Summary of this function goes here
 %   Detailed explanation goes here
 
-service_weight = [15,10,5,5,15];
-data_weight = [5, 10];
+service_weight = [1,5,20];
+data_weight = [2, 10];
 cols = state.Nodes.Services;
+
+
 maintanance_cost =0;
 service_links2 = 0;
   for n = 1:(length(cols(1,:)))
