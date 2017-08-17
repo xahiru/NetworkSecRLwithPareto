@@ -62,12 +62,12 @@ points(ATTACKER) = AttackerPoints;
 points(DEFENDER) = DeffenderPoints;
 
 
-graphData = zeros(gameRounds,3,3,5); %gameRound, reward vector length, three tyeps of test (n), 5 loops 
+graphData = zeros(gameRounds,3,3,80); %gameRound, reward vector length, three tyeps of test (n), 5 loops 
 
 
 
  tic
-for m = 1 : 5
+for m = 1 : 80
     for n = 1: 3
         %n = 1  normal (Pareto and Qlearning)
         %n = 2 onlyQlearning with Random
@@ -75,7 +75,7 @@ for m = 1 : 5
         % Create a Q-table
         points(ATTACKER) = AttackerPoints;
         points(DEFENDER) = DeffenderPoints;
-        QTABLE = cell(int16(gameRounds * 2 * points(ATTACKER) / service_cost) ,4); 
+        QTABLE = cell(int16(gameRounds * 2 * points(ATTACKER) / service_cost) ,4); %4 dim
         
 
         qTableSize = size(QTABLE,1);      
